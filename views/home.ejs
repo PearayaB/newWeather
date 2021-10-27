@@ -48,19 +48,94 @@
                 </div>
 
                 <div class="humidity">
-                    <!-- <p>humidity</p> -->
+                    <p>humidity</p>
                     <div id="humidity-div"></div>
                 
 
-                <!-- <div class="PM">
+                <div class="PM">
                     <p>PM2.5</p>
                     <div id="PM"></div>
-                </div> -->
+                </div>
 
             </div>
         </div>
     </div>
-    <script src="home.js"></script>
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <script>
+        const appKey ="8d57fe1e61dec450763ffad87e49b3f7"
+        const token = "a3e2ae9deadc84f1731fa414884c8cf8a09bb495"
+
+const searchButton = document.querySelector("#search-btn");
+const searchInput = document.querySelector("#search-txt");
+const cityName = document.querySelector("#city-name");
+const icon = document.querySelector("#icon");
+const temperature = document.querySelector("#temp");
+const humidity = document.querySelector("#humidity-div");
+const PM = document.querySelector("#PM");
+const main = document.querySelector("#main");
+const description = document.querySelector("#description");
+const fahrenheit = document.querySelector("#fahrenheit");
+
+searchButton.addEventListener("click",findWeatherDetails,finPMDetails);
+searchInput.addEventListener("keyup",enterPressed);
+
+function enterPressed(event){
+    if(event.key == "Enter"){
+        findWeatherDetails,f();
+    }
+}
+
+function findWeatherDetails(){
+    if(searchInput.value == ""){
+
+    } else{
+        const searchLink = "http://api.openweathermap.org/data/2.5/weather?q=" + searchInput.value + "&appid=" + appKey;
+        httpRequestAsync(searchLink,theResponse);
+    }
+
+}
+
+function finPMDetails(){
+    if(searchInput.value == ""){
+
+    } else{
+        const searchLink = "http://api.waqi.info/feed/" + searchInput.value + "/?token=" + token;
+        httpRequestAsync(searchLink,theResponse);
+    }
+
+}
+
+
+function theResponse(response){
+    const jsonObject = JSON.parse(response); // json => js object//
+    cityName.innerHTML = jsonObject.name;
+    icon.src = "https://openweathermap.org/img/w/"+jsonObject.weather[0].icon + ".png";
+    temperature.innerHTML = parseInt(jsonObject.main.temp -273) + "°";
+    humidity.innerHTML = jsonObject.main.humidity + "%";
+    main.innerHTML = jsonObject.weather[0].main;
+    description.innerHTML = jsonObject.weather[0].description;
+    fahrenheit.innerHTML = parseInt(jsonObject.main.temp -273)*9/5 +32 +"°F";
+    PM.innerHTML = parseInt(jsonObject.pm25.v);
+    
+    console.log(main);
+    console.log(pm25);
+}
+
+function httpRequestAsync(url,callback){
+    const httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = () =>{
+        if (httpRequest.readyState == 4 && httpRequest.status ==200){
+        callback(httpRequest.responseText); //return text//
+    }
+}
+
+httpRequest.open("GET",url,true); // true foe async //
+httpRequest.send();
+}
+
+    </script>
+
+<!--  ---------------------------------------------------------------------------------------------------------------->
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho&display=swap');
 
@@ -171,7 +246,6 @@ header a:hover{
   overflow: auto;
 }
 
-/* Navbar links */
 .navbar a {
   float: right;
   text-align: center;
@@ -181,7 +255,6 @@ header a:hover{
   font-size: 17px;
 }
 
-/* Navbar links on mouse-over */
 .navbar a:hover {
   background-color: #000;
 }
@@ -189,7 +262,6 @@ h1{
     color: white;
 }
 
-/* Add responsiveness - will automatically display the navbar vertically instead of horizontally on screens less than 500 pixels */
 @media screen and (max-width: 500px) {
   .navbar a {
     float: none;
@@ -199,6 +271,6 @@ h1{
 
 
 </style>
-    <!-- <script src="main.js"></script> -->
+   <!---------------------------------------------------------------------------------------------->
 </body>
 </html>
