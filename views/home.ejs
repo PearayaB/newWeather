@@ -76,12 +76,15 @@ const main = document.querySelector("#main");
 const description = document.querySelector("#description");
 const fahrenheit = document.querySelector("#fahrenheit");
 
-searchButton.addEventListener("click",findWeatherDetails,finPMDetails);
+searchButton.addEventListener("click",()=>{
+    findWeatherDetails()
+    finPMDetails()
+});
 searchInput.addEventListener("keyup",enterPressed);
 
 function enterPressed(event){
     if(event.key == "Enter"){
-        findWeatherDetails,f();
+        findWeatherDetails,finPMDetails();
     }
 }
 
@@ -100,7 +103,7 @@ function finPMDetails(){
 
     } else{
         const searchLink = "http://api.waqi.info/feed/" + searchInput.value + "/?token=" + token;
-        httpRequestAsync(searchLink,theResponse);
+        HttpRequestAsync(searchLink,TheResponse);
     }
 
 }
@@ -115,10 +118,12 @@ function theResponse(response){
     main.innerHTML = jsonObject.weather[0].main;
     description.innerHTML = jsonObject.weather[0].description;
     fahrenheit.innerHTML = parseInt(jsonObject.main.temp -273)*9/5 +32 +"°F";
-    PM.innerHTML = parseInt(jsonObject.pm25.v);
-    
-    console.log(main);
-    console.log(pm25);
+}
+
+function TheResponse(res){
+    const jsonObject = JSON.parse(res); // json => js object//
+    PM.innerHTML = parseInt(jsonObject.data.iaqi.pm25.v);
+    // console.log(jsonObject);
 }
 
 function httpRequestAsync(url,callback){
@@ -131,6 +136,18 @@ function httpRequestAsync(url,callback){
 
 httpRequest.open("GET",url,true); // true foe async //
 httpRequest.send();
+}
+
+function HttpRequestAsync(url,callback){
+    const HttpRequest = new XMLHttpRequest();
+    HttpRequest.onreadystatechange = () =>{
+        if (HttpRequest.readyState == 4 && HttpRequest.status ==200){
+        callback(HttpRequest.responseText); //return text//
+    }
+}
+
+HttpRequest.open("GET",url,true); // true foe async //
+HttpRequest.send();
 }
 
     </script>
