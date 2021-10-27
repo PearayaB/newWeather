@@ -123,7 +123,7 @@ function theResponse(response){
 function TheResponse(res){
     const jsonObject = JSON.parse(res); // json => js object//
     PM.innerHTML = parseInt(jsonObject.data.iaqi.pm25.v);
-    // console.log(jsonObject);
+    
 }
 
 function httpRequestAsync(url,callback){

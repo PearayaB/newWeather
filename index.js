@@ -1,163 +1,220 @@
-const express = require('express');
-const path = require('path');
-const cookieSession = require('cookie-session');
-const bcrypt = require('bcrypt');
-const dbConnection = require('./views/database');
-const { body, validationResult } = require('express-validator');
-
+const express = require("express");
+const path = require("path");
+const cookieSession = require("cookie-session");
+const bcrypt = require("bcrypt");
+const dbConnection = require("./views/database");
+const { body, validationResult } = require("express-validator");
 
 const app = express();
-app.use(express.urlencoded({extended:false}));
+var passport = require("passport"),
+  FacebookStrategy = require("passport-facebook").Strategy;
 
-app.set('views', path.join(__dirname,'views'));
-app.set('view engine','ejs');
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: "431883691659103",
+      clientSecret: "3abc1d47c041bae5257ecdc32fd74bbb",
+      callbackURL: "http://localhost:3000/auth/facebook/callback",
+    },
+    function (req, accessToken, refreshToken, profile, done) {
+      try {
+        console.log(req);
+        if (profile) {
+          req.user = profile;
+          done(null, profile);
+        }
+      } catch (err) {
+        done(err);
+      }
+    }
+  )
+);
+app.use(express.urlencoded({ extended: false }));
+
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 // APPLY COOKIE SESSION MIDDLEWARE
-app.use(cookieSession({
-    name: 'session',
-    keys: ['key1', 'key2'],
-    maxAge:  3600 * 1000 
-}));
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["key1", "key2"],
+    maxAge: 3600 * 1000,
+  })
+);
 
 const ifNotLoggedin = (req, res, next) => {
-    if(!req.session.isLoggedIn){
-        return res.render('signup');
-    }
-    next();
-}
+  if (!req.session.isLoggedIn) {
+    return res.render("signup");
+  }
+  next();
+};
 
-const ifLoggedin = (req,res,next) => {
-    if(req.session.isLoggedIn){
-        return res.redirect('/home');
-    }
-    next();
-}
-
-app.get('/', ifNotLoggedin, (req,res,next) => {
-    dbConnection.execute("SELECT `name` FROM `users` WHERE `id`=?",[req.session.userID])
+const ifLoggedin = (req, res, next) => {
+  if (req.session.isLoggedIn) {
+    return res.redirect("/home");
+  }
+  next();
+};
+app.use(passport.initialize());
+app.get("/", ifNotLoggedin, (req, res, next) => {
+  dbConnection
+    .execute("SELECT `name` FROM `users` WHERE `id`=?", [req.session.userID])
     .then(([rows]) => {
-        res.render('home',{
-            name:rows[0].name
-        })
-    })
-    
-})
+      res.render("home", {
+        name: rows[0].name,
+      });
+    });
+});
 
-app.post('/register', ifLoggedin, 
+app.post(
+  "/register",
+  ifLoggedin,
 
-[
-    body('user_email','Invalid email address!').isEmail().custom((value) => {
-        return dbConnection.execute('SELECT `email` FROM `users` WHERE `email`=?', [value])
-        .then(([rows]) => {
-            if(rows.length > 0){
-                return Promise.reject('This E-mail already in use!');
+  [
+    body("user_email", "Invalid email address!")
+      .isEmail()
+      .custom((value) => {
+        return dbConnection
+          .execute("SELECT `email` FROM `users` WHERE `email`=?", [value])
+          .then(([rows]) => {
+            if (rows.length > 0) {
+              return Promise.reject("This E-mail already in use!");
             }
             return true;
-        });
-    }),
-    body('user_name','Username is Empty!').trim().not().isEmpty(),
-    body('user_pass','The password must be of minimum length 6 characters').trim().isLength({ min: 6 }),
-],
-(req,res,next) => {
-
+          });
+      }),
+    body("user_name", "Username is Empty!").trim().not().isEmpty(),
+    body("user_pass", "The password must be of minimum length 6 characters")
+      .trim()
+      .isLength({ min: 6 }),
+  ],
+  (req, res, next) => {
     const validation_result = validationResult(req);
-    const {user_name, user_pass, user_email} = req.body;
-    
-    if(validation_result.isEmpty()){
-      
-        bcrypt.hash(user_pass, 12).then((hash_pass) => {
-          
-            dbConnection.execute("INSERT INTO `users`(`name`,`email`,`password`) VALUES(?,?,?)",[user_name,user_email, hash_pass])
-            .then(result => {
-                res.send(`your account has been created successfully, Now you can <a href="/">Login</a>`);
-            }).catch(err => {
-                
-                if (err) throw err;
+    const { user_name, user_pass, user_email } = req.body;
+
+    if (validation_result.isEmpty()) {
+      bcrypt
+        .hash(user_pass, 12)
+        .then((hash_pass) => {
+          dbConnection
+            .execute(
+              "INSERT INTO `users`(`name`,`email`,`password`) VALUES(?,?,?)",
+              [user_name, user_email, hash_pass]
+            )
+            .then((result) => {
+              res.send(
+                `your account has been created successfully, Now you can <a href="/">Login</a>`
+              );
+            })
+            .catch((err) => {
+              if (err) throw err;
             });
         })
-        .catch(err => {
-            
-            if (err) throw err;
-        })
-    }
-    else{
-       
-        let allErrors = validation_result.errors.map((error) => {
-            return error.msg;
+        .catch((err) => {
+          if (err) throw err;
         });
-        
-        res.render('signup',{
-            register_error:allErrors,
-            old_data:req.body
-        });
+    } else {
+      let allErrors = validation_result.errors.map((error) => {
+        return error.msg;
+      });
+
+      res.render("signup", {
+        register_error: allErrors,
+        old_data: req.body,
+      });
     }
-})
+  }
+);
 
 // LOGIN PAGE
-app.post('/', ifLoggedin, [
-    body('user_email').custom((value) => {
-        return dbConnection.execute('SELECT email FROM users WHERE email=?', [value])
+
+// Redirect the user to Facebook for authentication.  When complete,
+// Facebook will redirect the user back to the application at
+//     /auth/facebook/callback
+app.get("/auth/facebook", passport.authenticate("facebook"));
+
+// Facebook will redirect the user to this URL after approval.  Finish the
+// authentication process by attempting to obtain an access token.  If
+// access was granted, the user will be logged in.  Otherwise,
+// authentication has failed.
+app.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", {
+    session: false,
+    failureRedirect: "http://localhost:3000",
+  }),
+  (req, res) => {
+    res.redirect("http://localhost:3000/");
+  }
+);
+
+app.post(
+  "/",
+  ifLoggedin,
+  [
+    body("user_email").custom((value) => {
+      return dbConnection
+        .execute("SELECT email FROM users WHERE email=?", [value])
         .then(([rows]) => {
-            if(rows.length == 1){
-                return true;
-                
-            }
-            return Promise.reject('Invalid Email Address!');
-            
+          if (rows.length == 1) {
+            return true;
+          }
+          return Promise.reject("Invalid Email Address!");
         });
     }),
-    body('user_pass','Password is empty!').trim().not().isEmpty(),
-], (req, res) => {
+    body("user_pass", "Password is empty!").trim().not().isEmpty(),
+  ],
+  (req, res) => {
     const validation_result = validationResult(req);
-    const {user_pass, user_email} = req.body;
-    if(validation_result.isEmpty()){
-        
-        dbConnection.execute("SELECT * FROM `users` WHERE `email`=?",[user_email])
+    const { user_pass, user_email } = req.body;
+    if (validation_result.isEmpty()) {
+      dbConnection
+        .execute("SELECT * FROM `users` WHERE `email`=?", [user_email])
         .then(([rows]) => {
-            bcrypt.compare(user_pass, rows[0].password).then(compare_result => {
-                if(compare_result === true){
-                    req.session.isLoggedIn = true;
-                    req.session.userID = rows[0].id;
+          bcrypt
+            .compare(user_pass, rows[0].password)
+            .then((compare_result) => {
+              if (compare_result === true) {
+                req.session.isLoggedIn = true;
+                req.session.userID = rows[0].id;
 
-                    res.redirect('/');
-                }
-                else{
-                    res.render('signup',{
-                        login_errors:['Invalid Password!']
-                    });
-                }
+                res.redirect("/");
+              } else {
+                res.render("signup", {
+                  login_errors: ["Invalid Password!"],
+                });
+              }
             })
-            .catch(err => {
-                if (err) throw err;
+            .catch((err) => {
+              if (err) throw err;
             });
-
-
-        }).catch(err => {
-            if (err) throw err;
+        })
+        .catch((err) => {
+          if (err) throw err;
         });
+    } else {
+      let allErrors = validation_result.errors.map((error) => {
+        return error.msg;
+      });
+      // REDERING login-register PAGE WITH LOGIN VALIDATION ERRORS
+      res.render("signup", {
+        login_errors: allErrors,
+      });
     }
-    else{
-        let allErrors = validation_result.errors.map((error) => {
-            return error.msg;
-        });
-        // REDERING login-register PAGE WITH LOGIN VALIDATION ERRORS
-        res.render('signup',{
-            login_errors: allErrors
-        });
-    }
-});
+  }
+);
 // END OF LOGIN PAGE
 // LOGOUT
-app.get('/logout',(req,res)=>{
-    //session destroy
-    req.session = null;
-    res.redirect('/');
+app.get("/logout", (req, res) => {
+  //session destroy
+  req.session = null;
+  res.redirect("/");
 });
 // END OF LOGOUT
 
-app.use('/', (req,res) => {
-    res.status(404).send('<h1>404 Page Not Found!</h1>');
+app.use("/", (req, res) => {
+  res.status(404).send("<h1>404 Page Not Found!</h1>");
 });
-
 
 app.listen(3000, () => console.log("Server is Running..."));
