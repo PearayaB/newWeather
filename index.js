@@ -4,44 +4,69 @@ const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const dbConnection = require("./views/database");
 const { body, validationResult } = require("express-validator");
-
+const session = require("express-session");
 const app = express();
-var passport = require("passport"),
-  FacebookStrategy = require("passport-facebook").Strategy;
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
+// var passport = require("passport"),
+//   FacebookStrategy = require("passport-facebook").Strategy;
 
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: "431883691659103",
-      clientSecret: "3abc1d47c041bae5257ecdc32fd74bbb",
-      callbackURL: "http://localhost:3000/auth/facebook/callback",
-    },
-    function (req, accessToken, refreshToken, profile, done) {
-      try {
-        console.log(req);
-        if (profile) {
-          req.user = profile;
-          done(null, profile);
-        }
-      } catch (err) {
-        done(err);
-      }
-    }
-  )
+//   passport.use(new GoogleStrategy({
+//     clientID:    "949425010900-hsg5sbmi22clvhefb4beg2jporg1kgnh.apps.googleusercontent.com",
+//     clientSecret: "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",
+//     callbackURL: "http://localhost:3000/auth/google/callback",
+//     passReqToCallback   : true
+//   },(request, accessToken, refreshToken, profile, done) => {
+//       return done(null, profile);
+//   }
+// ));
+
+// passport.use(
+//   new FacebookStrategy(
+//     {
+//       clientID: "431883691659103",
+//       clientSecret: "3abc1d47c041bae5257ecdc32fd74bbb",
+//       callbackURL: "http://localhost:3000/auth/facebook/callback",
+//     },
+//     function (req, accessToken, refreshToken, profile, done) {
+//       try {
+//         console.log(req);
+//         if (profile) {
+//           req.user = profile;
+//           done(null, profile);
+//         }
+//       } catch (err) {
+//         done(err);
+//       }
+//     }
+//   )
+// );
+//Middleware
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true,
+  })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+
+
+
 // APPLY COOKIE SESSION MIDDLEWARE
-app.use(
-  cookieSession({
-    name: "session",
-    keys: ["key1", "key2"],
-    maxAge: 3600 * 1000,
-  })
-);
+// app.use(
+//   cookieSession({
+//     name: "session",
+//     keys: ["key1", "key2"],
+//     maxAge: 3600 * 1000,
+//   })
+// );
 
 const ifNotLoggedin = (req, res, next) => {
   if (!req.session.isLoggedIn) {
@@ -56,7 +81,29 @@ const ifLoggedin = (req, res, next) => {
   }
   next();
 };
-app.use(passport.initialize());
+
+// app.use(passport.initialize());
+
+// app.get('/auth/google',
+//   passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
+// app.get('/auth/google/callback', passport.authenticate( 'google', {
+//    successRedirect: '/home',
+//    failureRedirect: '/login'
+// }));
+
+// checkAuthenticated = (req, res, next) => {
+//     if (req.isAuthenticated()) { return next() }
+//     res.redirect("/login")
+//   }
+
+//   app.get("/dashboard", checkAuthenticated, (req, res) => {
+//     res.render("home.ejs", {name: req.user.displayName})
+//   })
+
+// app.delete("/logout", (req,res) => {
+//    req.logOut()
+// })
+
 app.get("/", ifNotLoggedin, (req, res, next) => {
   dbConnection
     .execute("SELECT `name` FROM `users` WHERE `id`=?", [req.session.userID])
@@ -132,22 +179,22 @@ app.post(
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
 //     /auth/facebook/callback
-app.get("/auth/facebook", passport.authenticate("facebook"));
+// app.get("/auth/facebook", passport.authenticate("facebook"));
 
 // Facebook will redirect the user to this URL after approval.  Finish the
 // authentication process by attempting to obtain an access token.  If
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
-app.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    session: false,
-    failureRedirect: "http://localhost:3000",
-  }),
-  (req, res) => {
-    res.redirect("http://localhost:3000/");
-  }
-);
+// app.get(
+//   "/auth/facebook/callback",
+//   passport.authenticate("facebook", {
+//     session: false,
+//     failureRedirect: "http://localhost:3000",
+//   }),
+//   (req, res) => {
+//     res.redirect("http://localhost:3000/");
+//   }
+// );
 
 app.post(
   "/",
@@ -213,8 +260,114 @@ app.get("/logout", (req, res) => {
 });
 // END OF LOGOUT
 
-app.use("/", (req, res) => {
-  res.status(404).send("<h1>404 Page Not Found!</h1>");
+// app.use("/", (req, res) => {
+//   res.status(404).send("<h1>404 Page Not Found!</h1>");
+// });
+
+// init passport on every route call
+ //allow passport to use "express-session"
+
+//Get the GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from Google Developer Console
+
+
+authUser = (request, accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+};
+
+//Use "GoogleStrategy" as the Authentication Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: "949425010900-hsg5sbmi22clvhefb4beg2jporg1kgnh.apps.googleusercontent.com",
+      clientSecret: "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",
+      callbackURL: "http://localhost:3000/auth/google/callback",
+      passReqToCallback: true,
+    },
+    authUser
+  )
+);
+
+passport.serializeUser((user, done) => {
+  console.log(`\n--------> Serialize User:`);
+  console.log(user);
+  // The USER object is the "authenticated user" from the done() in authUser function.
+  // serializeUser() will attach this user to "req.session.passport.user.{user}", so that it is tied to the session object for each session.
+
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  console.log("\n--------- Deserialized User:");
+  console.log(user);
+  // This is the {user} that was saved in req.session.passport.user.{user} in the serializationUser()
+  // deserializeUser will attach this {user} to the "req.user.{user}", so that it can be used anywhere in the App.
+
+  done(null, user);
+});
+
+//Start the NODE JS server
+// app.listen(3001, () => console.log(`Server started on port 3001...`))
+
+//console.log() values of "req.session" and "req.user" so we can see what is happening during Google Authentication
+let count = 1;
+showlogs = (req, res, next) => {
+  console.log("\n==============================");
+  console.log(`------------>  ${count++}`);
+
+  console.log(`\n req.session.passport -------> `);
+  console.log(req.session.passport);
+
+  console.log(`\n req.user -------> `);
+  console.log(req.user);
+
+  console.log("\n Session and Cookie");
+  console.log(`req.session.id -------> ${req.session.id}`);
+  console.log(`req.session.cookie -------> `);
+  console.log(req.session.cookie);
+
+  console.log("===========================================\n");
+
+  next();
+};
+
+app.use(showlogs);
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/",
+    failureRedirect: "/signup",
+  })
+);
+
+//Define the Login Route
+app.get("/login", (req, res) => {
+  res.render("signup.ejs");
+});
+
+//Use the req.isAuthenticated() function to check if user is Authenticated
+checkAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/signup");
+};
+
+//Define the Protected Route, by using the "checkAuthenticated" function defined above as middleware
+// app.get("/dashboard", checkAuthenticated, (req, res) => {
+//   res.render("dashboard.ejs", { name: req.user.displayName });
+// });
+
+//Define the Logout
+app.post("/logout", (req, res) => {
+  req.logOut();
+  res.redirect("/signup");
+  console.log(`-------> User Logged out`);
 });
 
 app.listen(3000, () => console.log("Server is Running..."));
