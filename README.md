@@ -29,6 +29,8 @@ $ npm run dev
 > https://waqi.info/
 * weather
 > https://openweathermap.org/api
+* Background image
+> https://source.unsplash.com/
 
 ## Authentication before starting playing around with the application
 Users must be locked in before they can access the website and complete all function.
