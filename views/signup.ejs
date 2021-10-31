@@ -25,23 +25,23 @@
                 <label for="_pass">Password</label>
                 <input type="password" name="user_pass" id="_pass" class="form-control" placeholder="Password" >
             </div>
-            <% if (locals.login_error) { 
+            <!-- <% if (locals.login_error) { 
                 register_error.forEach(function(error_msg){ %>
                 <div class="alert alert-danger" role="alert"><%= error_msg %></div>
               <% });
               } %>
-    
+     -->
             <div class="form-group">
               
             <div class="form-group">
-                <button type="submit" class="btn btn-block create-account" onclick="window.location.href='home.ejs'">LOGIN</button>
+                <button type="submit" class="btn btn-block create-account" onclick="window.location.href='/home'">LOGIN</button>
             </div>
         </form>
         <div class="social-media">
             <h5>Sign in with social media</h5>
             <div class="social-icons">
                 <a href="http://localhost:3000/auth/facebook"><i class="icon-social-facebook" title="Facebook"></i></a>
-                <form action="http://localhost:3000/auth/google" method="GET"> <button type="submit"><a href="#"><i class="icon-social-google" title="Google"></i></a></button></form>
+                <form action="http://localhost:3000/auth/google" method="GET"> <button type="submit"><a href="home.ejs"><i class="icon-social-google" title="Google"></i></a></button></form>
                 <a href="#"><i class="icon-social-twitter" title="Twitter"></i></a>
             </div>
         </div>
@@ -84,7 +84,7 @@
             <h5>Sign up with social media</h5>
             <div class="social-icons">
                 <a href="http://localhost:3000/auth/facebook"><i class="icon-social-facebook" title="Facebook" ></i></a>
-                <a href="#"><i class="icon-social-google" title="Google"></i></a>
+                 <form action="http://localhost:3000/auth/google" method="GET"> <button type="submit"><a href="#"><i class="icon-social-google" title="Google"></i></a></button></form>
                 <a href="#"><i class="icon-social-twitter" title="Twitter"></i></a>
             </div>
         </div>

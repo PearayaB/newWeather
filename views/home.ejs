@@ -11,10 +11,11 @@
    
 
     <div class="navbar">
-    <a href="#"><i class="fa fa-fw fa-user"></i> Login</a>
+    <!-- <a href="#"><i class="fa fa-fw fa-user"></i> Login</a> --> 
+    <a href="/signup" class="btn btn-danger">Logout</a>
     <a href="#"><i class="fa fa-star" aria-hidden="true"></i> Favorite</a>
     <h1>Hello, <%= name %></h1>
-    <a href="/logout" class="btn btn-danger">Logout</a>
+   
 
 </div>
 </head>
@@ -33,28 +34,24 @@
             <div class="city">
                 <div id="star">
                 <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></div>
+
                 <div id="city-name"></div>
+
+                
                 <img src="" id="icon" alt="">
-               </div>
                 <div id="main"></div>
                 <div id="description"></div>
-
+                
+               </div>
+               <div id="humidity-div"></div>
+                <div id="PM"></div>
+    
                 <div class="temperature">
                     <div id="temp"></div>
                 </div>
 
                 <div class="fahrenheit">
                     <div id="fahrenheit"></div>
-                </div>
-
-                <div class="humidity">
-                    <p>humidity</p>
-                    <div id="humidity-div"></div>
-                
-
-                <div class="PM">
-                    <p>PM2.5</p>
-                    <div id="PM"></div>
                 </div>
 
             </div>
@@ -75,6 +72,7 @@ const PM = document.querySelector("#PM");
 const main = document.querySelector("#main");
 const description = document.querySelector("#description");
 const fahrenheit = document.querySelector("#fahrenheit");
+document.body.style.backgroundImage
 
 searchButton.addEventListener("click",()=>{
     findWeatherDetails()
@@ -118,6 +116,7 @@ function theResponse(response){
     main.innerHTML = jsonObject.weather[0].main;
     description.innerHTML = jsonObject.weather[0].description;
     fahrenheit.innerHTML = parseInt(jsonObject.main.temp -273)*9/5 +32 +"°F";
+    document.body.style.backgroundImage = "url('https://source.unsplash.com/1600x900/?" + searchInput.value + "')";
 }
 
 function TheResponse(res){
@@ -161,6 +160,7 @@ HttpRequest.send();
     padding: 0;
     box-sizing: border-box;
     font-family: 'Zen Old Mincho', serif;
+    color:white;
 }
 
 .center{
@@ -175,30 +175,37 @@ HttpRequest.send();
     display: grid;
     grid-template-areas: "header header"
                          "city temp"
-                         "city fahrenheit"
-                         "city humidity";
-                         /* "city PM"  */
+                         "city fahrenheit";
+                         /* "city humidity"
+                         "city PM"; */
     grid-template-columns: 60% 40%;
     grid-template-rows: 55px 1fr 1fr;
-    width: 500px;
-    height: 300px;
+    width: 600px;
+    height: 400px;
     border-radius: 30px;
     box-shadow: 3px 3px 50px rgba(0, 0, 0, 0.1);
+    background-color: black;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
 }
 
 header{
     grid-area: header;
     padding: 10px;
     border-radius: 30px 30px 0 0;
-    text-align: center;
-    background: linear-gradient(to right,#43c6ac,#5691ff);
+    /* text-align: center; */
+    background: black;
+    
 }
 
 header input{
-    outline: none;
-    border:none;
-    padding: 10px 20px;
-    border-radius: 20px;
+  border: none;
+  outline: none;
+  border-radius: 24px;
+  background: #7c7c7c2b;
+  color: white;
+  width: 60%;
+  
 }
 
 header a{
@@ -221,6 +228,24 @@ header a:hover{
     font-size: 2em;
 }
 
+.main{
+    grid-area: city;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    font-size: 2em;
+}
+
+.description{
+    grid-area: city;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    font-size: 2em;
+    margin-right: 500;
+}
+
+
 .temperature{
     grid-area: temp;
     display: flex;
@@ -235,7 +260,7 @@ header a:hover{
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid rgb(185, 205, 206);
+    /* border-bottom: 1px solid rgb(185, 205, 206); */
     font-size: 2em;
 }
 
@@ -244,23 +269,25 @@ header a:hover{
     display: flex;
     justify-content: center;
     align-items: center;
+    /* border-bottom: 1px solid rgb(185, 205, 206); */
     font-size: 2em;
 }
-/* body{
-    background-color: #dee9ff;
-} */
-/* .PM{
+body{
+    background-image: url('https://source.unsplash.com/1600x900/?landscape');
+    
+}
+.PM{
     grid-area: PM;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em;
-} */
+    /* justify-content: center;
+    align-items: center; */
+    /* font-size: 2em; */
+}
 
 .navbar {
-  width: 100%;
-  background-color: #555;
-  overflow: auto;
+    background-color: black;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
 }
 
 .navbar a {

@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const cookieSession = require("cookie-session");
+// const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const dbConnection = require("./views/database");
 const { body, validationResult } = require("express-validator");
@@ -256,7 +256,7 @@ app.post(
 app.get("/logout", (req, res) => {
   //session destroy
   req.session = null;
-  res.redirect("/");
+  res.redirect("/signup");
 });
 // END OF LOGOUT
 
@@ -366,7 +366,7 @@ checkAuthenticated = (req, res, next) => {
 //Define the Logout
 app.post("/logout", (req, res) => {
   req.logOut();
-  res.redirect("/signup");
+  // res.redirect("/signup");
   console.log(`-------> User Logged out`);
 });
 
