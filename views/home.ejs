@@ -40,23 +40,23 @@
                 <div id="star">
                 <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></div>
 
-                <div id="city-name"></div>
+                <div id="city-name">bangkok</div>
 
                 
                 <img src="" id="icon" alt="">
-                <div id="main"></div>
-                <div id="description"></div>
+                <div id="main">rain</div>
+                <div id="description">raining</div>
                 
                </div>
-               <div id="humidity-div"></div>
-                <div id="PM"></div>
+               <div id="humidity-div">50%</div>
+                <div id="PM">1</div>
     
                 <div class="temperature">
-                    <div id="temp"></div>
+                    <div id="temp">36</div>
                 </div>
 
                 <div class="fahrenheit">
-                    <div id="fahrenheit"></div>
+                    <div id="fahrenheit">78</div>
                 </div>
 
             </div>
@@ -86,10 +86,11 @@ searchButton.addEventListener("click",()=>{
 searchInput.addEventListener("keyup",enterPressed);
 
 function enterPressed(event){
-    if(event.key == "Enter"){
-        findWeatherDetails,finPMDetails();
-    }
-}
+    if(event.key == "Enter",()=>{
+    findWeatherDetails()
+    finPMDetails()
+    });
+};
 
 function findWeatherDetails(){
     if(searchInput.value == ""){
