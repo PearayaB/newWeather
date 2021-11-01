@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-// const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const dbConnection = require("./views/database");
 const { body, validationResult } = require("express-validator");
@@ -57,31 +56,23 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 
-
-
-// APPLY COOKIE SESSION MIDDLEWARE
-// app.use(
-//   cookieSession({
-//     name: "session",
-//     keys: ["key1", "key2"],
-//     maxAge: 3600 * 1000,
-//   })
-// );
-
 const ifNotLoggedin = (req, res, next) => {
   if (!req.session.isLoggedIn) {
-    return res.render("signup");
+    return res.render("home",{
+      status:false
+    });
   }
   next();
 };
 
 const ifLoggedin = (req, res, next) => {
   if (req.session.isLoggedIn) {
-    return res.redirect("/home");
+    return res.render("home",{
+      status:true
+    });
   }
   next();
 };
-
 // app.use(passport.initialize());
 
 // app.get('/auth/google',
@@ -109,7 +100,8 @@ app.get("/", ifNotLoggedin, (req, res, next) => {
     .execute("SELECT `name` FROM `users` WHERE `id`=?", [req.session.userID])
     .then(([rows]) => {
       res.render("home", {
-        name: rows[0].name,
+        // name: rows[0].name,
+        
       });
     });
 });
@@ -196,7 +188,9 @@ app.post(
 //   }
 // );
 app.get('/home',(req,res)=>{
-  res.render('home')
+  res.render('home',{
+    status:true
+  });
 })
 
 app.post(
@@ -259,7 +253,7 @@ app.post(
 app.get("/logout", (req, res) => {
   //session destroy
   req.session = null;
-  res.redirect("/signup");
+  res.redirect("/login");
 });
 // END OF LOGOUT
 
@@ -350,7 +344,7 @@ app.get(
 
 //Define the Login Route
 app.get("/login", (req, res) => {
-  res.render("signup.ejs");
+  res.render("signup");
 });
 
 //Use the req.isAuthenticated() function to check if user is Authenticated
@@ -367,10 +361,10 @@ checkAuthenticated = (req, res, next) => {
 // });
 
 //Define the Logout
-app.post("/logout", (req, res) => {
-  req.logOut();
-  // res.redirect("/signup");
-  console.log(`-------> User Logged out`);
-});
+// app.post("/logout", (req, res) => {
+//   req.logOut();
+//   // res.redirect("/signup");
+//   console.log(`-------> User Logged out`);
+// });
 
 app.listen(3000, () => console.log("Server is Running..."));
