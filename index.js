@@ -195,6 +195,9 @@ app.post(
 //     res.redirect("http://localhost:3000/");
 //   }
 // );
+app.get('/home',(req,res)=>{
+  res.render('home')
+})
 
 app.post(
   "/",
@@ -340,7 +343,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/",
+    successRedirect: "/home",
     failureRedirect: "/signup",
   })
 );
