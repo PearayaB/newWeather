@@ -8,14 +8,13 @@
  
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-   
 
     <div class="navbar">
 
     <% if (status) { %>
-        <a href="/logout" class="btn btn-danger">Logout</a>
+        <a href="/logout" class="btn btn-danger"> Logout</a>
     <% } else { %>
-        <a href="/login" class="btn btn-danger">Login</a>
+        <a href="/login" class="btn btn-danger"> Login</a>
     <% } %>
     <a href="#"><i class="fa fa-star" aria-hidden="true"></i> Favorite</a>
     
@@ -31,35 +30,35 @@
             <header>
                 <div class="seaech">
                     <input type="text" placeholder="Enter City Name" id="search-txt">
-                    <a href="#" id="search-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <a href="#" id="search-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                       </svg></a>
                 </div>
             </header>
             <div class="city">
                 <div class="gridleft">
-                <div id="star">
-                <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></div>
+                <!-- <div id="star">
+                <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></div> -->
                     
-                <div id="city-name">Bangkok </div>
+                <div id="city-name"> <h1>Bangkok </h1></div>
                 <img src="" id="icon" alt="">
-                <div id="main"> Rain</div>
-                <div id="description">Raining</div>
+                <div id="main">  Rain</div>
+                <div id="description"> Raining</div>
             </div>
             </div>
 
             <div  class="humidity1" >Humidity</div>
-               <div id="humidity-div" class="humidity" ></div>
+               <div id="humidity-div" class="humidity" >50%</div>
                
                <div  class="PM25">PM2.5 </div>
-                <div id="PM" class="PM"></div>
+                <div id="PM" class="PM">78</div>
     
                 <div class="temperature" >
-                    <div id="temp" >36</div>
+                    <div id="temp" >36 C</div>
                 </div>
 
                 <div class="fahrenheit ">
-                    <div id="fahrenheit">78</div>
+                    <div id="fahrenheit">78 F</div>
                 </div>
             </div>
         </div>
@@ -85,14 +84,14 @@ searchButton.addEventListener("click",()=>{
     findWeatherDetails()
     finPMDetails()
 });
-searchInput.addEventListener("keyup",enterPressed);
+// searchInput.addEventListener("keyup",enterPressed);
 
-function enterPressed(event){
-    if(event.key == "Enter",()=>{
-    findWeatherDetails()
-    finPMDetails()
-    });
-};
+// function enterPressed(event){
+//     if(event.key == "Enter",()=>{
+//     findWeatherDetails()
+//     finPMDetails()
+//     });
+// };
 
 function findWeatherDetails(){
     if(searchInput.value == ""){
@@ -119,7 +118,7 @@ function theResponse(response){
     const jsonObject = JSON.parse(response); // json => js object//
     cityName.innerHTML = jsonObject.name;
     icon.src = "https://openweathermap.org/img/w/"+jsonObject.weather[0].icon + ".png";
-    temperature.innerHTML = parseInt(jsonObject.main.temp -273) + "°";
+    temperature.innerHTML = parseInt(jsonObject.main.temp -273) + "°C";
     humidity.innerHTML = jsonObject.main.humidity + "%";
     main.innerHTML = jsonObject.weather[0].main;
     description.innerHTML = jsonObject.weather[0].description;
@@ -134,8 +133,8 @@ function TheResponse(res){
 }
 
 function httpRequestAsync(url,callback){
-    const httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = () =>{
+    const httpRequest = new XMLHttpRequest(); //เป็นเอพีไอที่สามารถเรียกใช้ได้จาก จาวาสคริปต์ ในการแลกเปลี่ยน และปรับรูปแบบ XML จากเว็บเซิร์ฟเวอร์ โดยใช้ HTTP ซึ่งสร้างการเชื่อมต่อระหว่างเว็บเบราว์เซอร์ (Client-Side) กับ เว็บเซิร์ฟเวอร์ (Server-Side)
+    httpRequest.onreadystatechange = () =>{ // เป็นการระบุถึงสิ่งที่จะเกิดขึ้น เมื่อการตอบสนองจากแม่ข่ายพร้อม
         if (httpRequest.readyState == 4 && httpRequest.status ==200){
         callback(httpRequest.responseText); //return text//
     }
@@ -154,7 +153,7 @@ function HttpRequestAsync(url,callback){
 }
 
 HttpRequest.open("GET",url,true); // true foe async //
-HttpRequest.send();
+HttpRequest.send(); //send server
 }
 
     </script>
@@ -190,7 +189,7 @@ HttpRequest.send();
                          "city PM";
     grid-template-columns: 60% 40%;
     width: 600px;
-    height: 400px;
+    height: 500px;
     border-radius: 30px;
     box-shadow: 3px 3px 50px rgba(0, 0, 0, 0.1);
     background-color: black;
@@ -198,11 +197,15 @@ HttpRequest.send();
     filter: alpha(opacity=70);
 }
 
+/* #icon{
+    width: 100%;
+    height: 100%;
+} */
+
 header{
     grid-area: header;
     padding: 10px;
     border-radius: 30px 30px 0 0;
-    /* text-align: center; */
     background: black;
     width: 100%;
     margin: auto;
@@ -218,8 +221,8 @@ header input{
   width: 60%;
   text-align: center;
   width: 90%;
-  height: 30px;
-  font-size: large;
+  height: 50px;
+  font-size: larger;
   
 }
 
@@ -241,26 +244,20 @@ header a:hover{
     justify-content: center;
     align-items: center;
     border-right: 1px solid rgb(185, 205, 206);
-    font-size: 2em;
+    font-size: 2.5em;
 }
 
 .main{
-    grid-area: city;
     display: flex;
     justify-content: center;
-    /* align-items: center; */
-    font-size: 2em;
+    
 }
 
 .description{
-    grid-area: city;
     display: flex;
     justify-content: center;
-    /* align-items: center; */
-    font-size: 2em;
-    margin-right: 500;
+    
 }
-
 
 .temperature{
     grid-area: temp;
@@ -283,7 +280,7 @@ header a:hover{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 .humidity{
     grid-area: humidity;
@@ -308,7 +305,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
+    font-size: 1.5em;
  }
 
 .navbar {
@@ -324,21 +321,13 @@ body{
   padding: 12px;
   color: white;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 21.5px;
 }
 
 .navbar a:hover {
-  background-color: #000;
+  background-color: gray;
 }
 
-h1{
-    color: white;
-    font-family: 'Zen Old Mincho', serif;
-}
-
-.star{
-    margin-left: auto;
-}
 
 @media screen and (max-width: 500px) {
   .navbar a {

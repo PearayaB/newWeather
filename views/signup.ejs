@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     
 </head>
+<div class="signin">
 <h1>Hello Sign in!</h1>
 <body>
     <div class="registration-form">
@@ -25,12 +26,7 @@
                 <label for="_pass">Password</label>
                 <input type="password" name="user_pass" id="_pass" class="form-control" placeholder="Password" >
             </div>
-            <!-- <% if (locals.login_error) { 
-                register_error.forEach(function(error_msg){ %>
-                <div class="alert alert-danger" role="alert"><%= error_msg %></div>
-              <% });
-              } %>
-     -->
+    
             <div class="form-group">
               
             <div class="form-group">
@@ -46,8 +42,9 @@
             </div>
         </div>
     </div>
+</div>
     
-
+<div class="signup">
 <h1>Welcome Sign Up !</h1>
 <body>
     <div class="registration-form">
@@ -89,9 +86,11 @@
             </div>
         </div>
     </div>
-    
+</div>
     
 <style>
+
+
     body{
         background-image: url('https://source.unsplash.com/1600x900/?landscape');
 }
@@ -196,6 +195,7 @@
 h1{
     font-family: 'Zen Old Mincho', serif;
     text-align: center;
+    color: white;
 }
 p{
     text-align: center;

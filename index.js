@@ -1,14 +1,14 @@
-const express = require("express");
+const express = require("express"); 
 const path = require("path");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt"); //password insert to database
 const dbConnection = require("./views/database");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult } = require("express-validator"); // middleware check data to database
 const session = require("express-session");
 const app = express();
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 
-//Middleware
+
 app.use(
   session({
     secret: "secret",
@@ -20,10 +20,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views")); //find path everywhere
 app.set("view engine", "ejs");
 
-
+//Middleware
 const ifNotLoggedin = (req, res, next) => {
   if (!req.session.isLoggedIn) {
     return res.render("home",{
@@ -53,8 +53,9 @@ app.get("/", ifNotLoggedin, (req, res, next) => {
     });
 });
 
+//register
 app.post(
-  "/register",
+  "/register", //signup line14
   ifLoggedin,
 
   [
@@ -64,7 +65,7 @@ app.post(
         return dbConnection
           .execute("SELECT `email` FROM `users` WHERE `email`=?", [value])
           .then(([rows]) => {
-            if (rows.length > 0) {
+            if (rows.length > 0) { 
               return Promise.reject("This E-mail already in use!");
             }
             return true;
@@ -74,13 +75,13 @@ app.post(
     body("user_pass", "The password must be of minimum length 6 characters")
       .trim()
       .isLength({ min: 6 }),
-  ],
+  ], // end of post data validation
   (req, res, next) => {
     const validation_result = validationResult(req);
     const { user_name, user_pass, user_email } = req.body;
 
-    if (validation_result.isEmpty()) {
-      bcrypt
+    if (validation_result.isEmpty()) { // not error
+      bcrypt 
         .hash(user_pass, 12)
         .then((hash_pass) => {
           dbConnection
@@ -144,7 +145,7 @@ app.post(
         .execute("SELECT * FROM `users` WHERE `email`=?", [user_email])
         .then(([rows]) => {
           bcrypt
-            .compare(user_pass, rows[0].password)
+            .compare(user_pass, rows[0].password) //เปรียบเทียบรหัสที่รับมากับฐานข้อมูล
             .then((compare_result) => {
               if (compare_result === true) {
                 req.session.isLoggedIn = true;
@@ -168,21 +169,19 @@ app.post(
       let allErrors = validation_result.errors.map((error) => {
         return error.msg;
       });
-      // REDERING login-register PAGE WITH LOGIN VALIDATION ERRORS
       res.render("signup", {
         login_errors: allErrors,
       });
     }
   }
 );
-// END OF LOGIN PAGE
+
 // LOGOUT
 app.get("/logout", (req, res) => {
-  //session destroy
-  req.session = null;
+  // req.session = null;
   res.redirect("/login");
 });
-// END OF LOGOUT
+
 
 
 
