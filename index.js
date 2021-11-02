@@ -7,39 +7,7 @@ const session = require("express-session");
 const app = express();
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
-// var passport = require("passport"),
-//   FacebookStrategy = require("passport-facebook").Strategy;
 
-//   passport.use(new GoogleStrategy({
-//     clientID:    "949425010900-hsg5sbmi22clvhefb4beg2jporg1kgnh.apps.googleusercontent.com",
-//     clientSecret: "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",
-//     callbackURL: "http://localhost:3000/auth/google/callback",
-//     passReqToCallback   : true
-//   },(request, accessToken, refreshToken, profile, done) => {
-//       return done(null, profile);
-//   }
-// ));
-
-// passport.use(
-//   new FacebookStrategy(
-//     {
-//       clientID: "431883691659103",
-//       clientSecret: "3abc1d47c041bae5257ecdc32fd74bbb",
-//       callbackURL: "http://localhost:3000/auth/facebook/callback",
-//     },
-//     function (req, accessToken, refreshToken, profile, done) {
-//       try {
-//         console.log(req);
-//         if (profile) {
-//           req.user = profile;
-//           done(null, profile);
-//         }
-//       } catch (err) {
-//         done(err);
-//       }
-//     }
-//   )
-// );
 //Middleware
 app.use(
   session({
@@ -73,27 +41,6 @@ const ifLoggedin = (req, res, next) => {
   }
   next();
 };
-// app.use(passport.initialize());
-
-// app.get('/auth/google',
-//   passport.authenticate('google', { scope: [ 'email', 'profile' ] }));
-// app.get('/auth/google/callback', passport.authenticate( 'google', {
-//    successRedirect: '/home',
-//    failureRedirect: '/login'
-// }));
-
-// checkAuthenticated = (req, res, next) => {
-//     if (req.isAuthenticated()) { return next() }
-//     res.redirect("/login")
-//   }
-
-//   app.get("/dashboard", checkAuthenticated, (req, res) => {
-//     res.render("home.ejs", {name: req.user.displayName})
-//   })
-
-// app.delete("/logout", (req,res) => {
-//    req.logOut()
-// })
 
 app.get("/", ifNotLoggedin, (req, res, next) => {
   dbConnection
@@ -167,26 +114,6 @@ app.post(
 );
 
 // LOGIN PAGE
-
-// Redirect the user to Facebook for authentication.  When complete,
-// Facebook will redirect the user back to the application at
-//     /auth/facebook/callback
-// app.get("/auth/facebook", passport.authenticate("facebook"));
-
-// Facebook will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-// app.get(
-//   "/auth/facebook/callback",
-//   passport.authenticate("facebook", {
-//     session: false,
-//     failureRedirect: "http://localhost:3000",
-//   }),
-//   (req, res) => {
-//     res.redirect("http://localhost:3000/");
-//   }
-// );
 app.get('/home',(req,res)=>{
   res.render('home',{
     status:true
@@ -257,14 +184,6 @@ app.get("/logout", (req, res) => {
 });
 // END OF LOGOUT
 
-// app.use("/", (req, res) => {
-//   res.status(404).send("<h1>404 Page Not Found!</h1>");
-// });
-
-// init passport on every route call
- //allow passport to use "express-session"
-
-//Get the GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from Google Developer Console
 
 
 authUser = (request, accessToken, refreshToken, profile, done) => {
@@ -302,10 +221,7 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-//Start the NODE JS server
-// app.listen(3001, () => console.log(`Server started on port 3001...`))
 
-//console.log() values of "req.session" and "req.user" so we can see what is happening during Google Authentication
 let count = 1;
 showlogs = (req, res, next) => {
   console.log("\n==============================");
@@ -355,16 +271,6 @@ checkAuthenticated = (req, res, next) => {
   res.redirect("/signup");
 };
 
-//Define the Protected Route, by using the "checkAuthenticated" function defined above as middleware
-// app.get("/dashboard", checkAuthenticated, (req, res) => {
-//   res.render("dashboard.ejs", { name: req.user.displayName });
-// });
 
-//Define the Logout
-// app.post("/logout", (req, res) => {
-//   req.logOut();
-//   // res.redirect("/signup");
-//   console.log(`-------> User Logged out`);
-// });
 
 app.listen(3000, () => console.log("Server is Running..."));
