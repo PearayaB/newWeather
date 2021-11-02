@@ -37,28 +37,30 @@
                 </div>
             </header>
             <div class="city">
+                <div class="gridleft">
                 <div id="star">
                 <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></div>
-
-                <div id="city-name">bangkok</div>
-
-                
+                    
+                <div id="city-name">bangkok </div>
                 <img src="" id="icon" alt="">
-                <div id="main">rain</div>
+                <div id="main"> rain</div>
                 <div id="description">raining</div>
-                
-               </div>
-               <div id="humidity-div">50%</div>
-                <div id="PM">1</div>
+            </div>
+            </div>
+
+            <div  class="humidity1" >humidity</div>
+               <div id="humidity-div" class="humidity" ></div>
+               
+               <div  class="PM25">PM2.5 </div>
+                <div id="PM" class="PM"></div>
     
-                <div class="temperature">
-                    <div id="temp">36</div>
+                <div class="temperature" >
+                    <div id="temp" >36</div>
                 </div>
 
-                <div class="fahrenheit">
+                <div class="fahrenheit ">
                     <div id="fahrenheit">78</div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -181,13 +183,14 @@ HttpRequest.send();
     display: grid;
     grid-template-areas: "header header"
                          "city temp"
-                         "city fahrenheit";
-                         /* "city humidity"
-                         "city PM"; */
+                         "city fahrenheit"
+                         "city humidity1"
+                         "city humidity"
+                         "city PM25"
+                         "city PM";
     grid-template-columns: 60% 40%;
-    grid-template-rows: 55px 1fr 1fr;
     width: 600px;
-    height: 400px;
+    height: 450px;
     border-radius: 30px;
     box-shadow: 3px 3px 50px rgba(0, 0, 0, 0.1);
     background-color: black;
@@ -201,6 +204,8 @@ header{
     border-radius: 30px 30px 0 0;
     /* text-align: center; */
     background: black;
+    width: 100%;
+    margin: auto;
     
 }
 
@@ -211,7 +216,10 @@ header input{
   background: #7c7c7c2b;
   color: white;
   width: 60%;
- text-align: center;
+  text-align: center;
+  width: 90%;
+  height: 30px;
+  font-size: large;
   
 }
 
@@ -227,6 +235,7 @@ header a:hover{
 }
 
 .city{
+    
     grid-area: city;
     display: flex;
     justify-content: center;
@@ -267,16 +276,21 @@ header a:hover{
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border-bottom: 1px solid rgb(185, 205, 206); */
+    border-bottom: 1px solid rgb(185, 205, 206);
     font-size: 2em;
 }
-
+.humidity1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+}
 .humidity{
     grid-area: humidity;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border-bottom: 1px solid rgb(185, 205, 206); */
+    border-bottom: 1px solid rgb(185, 205, 206);
     font-size: 2em;
 }
 body{
@@ -286,15 +300,22 @@ body{
 .PM{
     grid-area: PM;
     display: flex;
-    /* justify-content: center;
-    align-items: center; */
-    /* font-size: 2em; */
-}
+    justify-content: center;
+    align-items: center; 
+     font-size: 2em; 
+ }
+ .PM25{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+ }
 
 .navbar {
     background-color: black;
     opacity: 0.6;
     filter: alpha(opacity=60);
+    height: 50px;
 }
 
 .navbar a {
@@ -309,9 +330,14 @@ body{
 .navbar a:hover {
   background-color: #000;
 }
+
 h1{
     color: white;
     font-family: 'Zen Old Mincho', serif;
+}
+
+.star{
+    float: right;
 }
 
 @media screen and (max-width: 500px) {
