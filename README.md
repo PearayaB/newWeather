@@ -3,6 +3,10 @@
 # About the project
 A weather app that can display temperatures and PM 2.5 values in one app from a user's input some city name.
 
+# Preview
+![image](https://user-images.githubusercontent.com/84061338/140000952-b3b98bb0-8b67-410d-9d91-9580a20b8b29.png)
+
+
 # Feature
 * Register & Login
 * Search cityname/country
